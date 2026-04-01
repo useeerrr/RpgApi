@@ -7,3 +7,4 @@ namespace RpgApi.Models.Enuns
         Clerigo=3
     }
 }
+

@@ -89,11 +89,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\bruh\\DS\\RpgApi\\RpgApi.csproj",
+      "projectUniqueName": "D:\\bruh\\DS\\RpgApi - Atividade\\RpgApi.csproj",
       "projectName": "RpgApi",
-      "projectPath": "D:\\bruh\\DS\\RpgApi\\RpgApi.csproj",
+      "projectPath": "D:\\bruh\\DS\\RpgApi - Atividade\\RpgApi.csproj",
       "packagesPath": "D:\\NugetPackages",
-      "outputPath": "D:\\bruh\\DS\\RpgApi\\obj\\",
+      "outputPath": "D:\\bruh\\DS\\RpgApi - Atividade\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
