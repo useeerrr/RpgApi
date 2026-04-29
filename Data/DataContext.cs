@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Identity.Client;
 using Microsoft.Net.Http.Headers;
+using RpgApi.Migrations;
 using RpgApi.Models;
 using RpgApi.Models.Enuns;
+using RpgApi.Utils;
 
 namespace RpgApi.Data
 {
@@ -18,10 +22,21 @@ namespace RpgApi.Data
        } 
 
        public DbSet<Personagem> TB_PERSONAGENS {get; set;}
+       public DbSet<Arma> TB_ARMAS {get; set;}
+       public DbSet<Usuario> TB_USUARIOS { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Personagem>().ToTable("JB_PERSONAGENS");
+            modelBuilder.Entity<Arma>().ToTable("TB_ARMA");
+            modelBuilder.Entity<Usuario>().ToTable("TB_USUARIOS");
+
+            modelBuilder.Entity<Usuario>()
+            .HasMany(e => e.Personagems)
+            .WithOne(e => e.Usuario)
+            .HasForeignKey(e => e.UsuarioID)
+            .IsRequired(false);
+
 
             modelBuilder.Entity<Personagem>().HasData
             (    
@@ -33,10 +48,41 @@ namespace RpgApi.Data
             new Personagem() { Id = 6, Nome = "Celeborn", PontosVida=100, Forca=21, Defesa=13, Inteligencia=34, Classe=ClasseEnum.Clerigo },
             new Personagem() { Id = 7, Nome = "Radagast", PontosVida=100, Forca=25, Defesa=11, Inteligencia=35, Classe=ClasseEnum.Mago }
             );
+
+            modelBuilder.Entity<Arma>().HasData
+           (
+             new Arma() { Id = 1, Nome = "Arco e Flecha", Dano = 35},
+             new Arma() { Id = 2, Nome = "Espada", Dano = 33},
+             new Arma() { Id = 3, Nome = "Machado", Dano = 31},
+             new Arma() { Id = 4, Nome = "Punho", Dano = 30},
+             new Arma() { Id = 5, Nome = "Chicote", Dano = 34},
+             new Arma() { Id = 6, Nome = "Foice", Dano = 33},
+             new Arma() { Id = 7, Nome = "Cajado", Dano = 32}
+           );
+           Usuario user = new Usuario();
+           Criptografia.CriarPasswordHash("123456", out byte[] hash, out byte[] salt);
+           user.Id = 1;
+           user.Username = "UsuarioAdmin";
+           user.PasswordString = string.Empty;
+           user.PasswordHash = hash;
+           user.PasswordSalt = salt;
+           user.Perfil = "Admin";
+           user.Email = "seuEmail@gmail.com";
+           user.Latitude = -23.5200241;
+           user.Longitude = -46.596498;
+
+           modelBuilder.Entity<Usuario>().HasData(user);
+
+           modelBuilder.Entity<Usuario>().Property(u => u.Perfil).HasDefaultValue("Jogador");
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder.Properties<string>().HaveColumnType("varchar").HaveMaxLength(200);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+           optionsBuilder.ConfigureWarnings(warnings => warnings
+           .Ignore(RelationalEventId.PendingModelChangesWarning)); 
         }
        
 
