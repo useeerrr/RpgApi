@@ -52,5 +52,36 @@ namespace RpgApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost("Autenticar")]
+public async Task<IActionResult> AutenticarUsuario(Usuario credenciais)
+{
+    try
+    {
+        Usuario? usuario = await _context.TB_USUARIOS
+            .FirstOrDefaultAsync(x => x.Username.ToLower()
+            .Equals(credenciais.Username.ToLower()));
+
+        if (usuario == null)
+        {
+            throw new System.Exception("Usuário não encontrado.");
+        }
+        else if (!Criptografia
+            .VerificarPasswordHash(
+                credenciais.PasswordString,
+                usuario.PasswordHash,
+                usuario.PasswordSalt))
+        {
+            throw new System.Exception("Senha incorreta.");
+        }
+        else
+        {
+            return Ok(usuario);
+        }
+    }
+    catch (System.Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
      }
 }
