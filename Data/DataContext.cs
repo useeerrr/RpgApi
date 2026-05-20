@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Identity.Client;
 using Microsoft.Net.Http.Headers;
 using RpgApi.Migrations;
@@ -26,14 +28,17 @@ namespace RpgApi.Data
        public DbSet<Usuario> TB_USUARIOS { get; set; }
        public DbSet <Habilidade> TB_HABILIDADES { get; set; }
        public DbSet <PersonagemHabilidade> TB_PERSONAGENS_HABILIDADES { get; set; }
+       public DbSet <Disputa> TB_DISPUTAS { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Personagem>().ToTable("JB_PERSONAGENS");
+            modelBuilder.Entity<Personagem>().ToTable("TB_PERSONAGENS");
             modelBuilder.Entity<Arma>().ToTable("TB_ARMA");
             modelBuilder.Entity<Usuario>().ToTable("TB_USUARIOS");
             modelBuilder.Entity<Habilidade>().ToTable("TB_HABILIDADES");
             modelBuilder.Entity<PersonagemHabilidade>().ToTable("TB_PERSONAGENS_HABILIDADES");
+            modelBuilder.Entity<Disputa>().ToTable("TB_DISPUTAS");
 
             modelBuilder.Entity<Usuario>()
             .HasMany(e => e.Personagems)
@@ -109,6 +114,12 @@ namespace RpgApi.Data
            modelBuilder.Entity<Usuario>().HasData(user);
 
            modelBuilder.Entity<Usuario>().Property(u => u.Perfil).HasDefaultValue("Jogador");
+
+           modelBuilder.Entity<Disputa>().HasKey(d => d.Id);
+           modelBuilder.Entity<Disputa>().Property(d => d.DataDisputa).HasColumnName("Dt_Disputa");
+           modelBuilder.Entity<Disputa>().Property(d => d.AtacanteId).HasColumnName("AtacanteId");
+           modelBuilder.Entity<Disputa>().Property(d => d.OponenteId).HasColumnName("OponenteId");
+           modelBuilder.Entity<Disputa>().Property(d => d.Narracao).HasColumnName("Tx_Narracao");
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
